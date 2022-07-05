@@ -1,0 +1,44 @@
+@attribute [PiralExtension("Layout.Topbar")]
+@attribute [PiralComponent]
+@inject NavigationManager _navigationManager
+
+<div style="display:flex; justify-content: space-between;">
+    <div>
+        I am on "@_topbarLeftParaams.page"
+    </div>
+    <div>
+        <NavLink href="my-pilet-1">Page 1</NavLink>
+        <NavLink href="my-pilet-2">Page 2</NavLink>
+    </div>
+</div>
+
+@code{
+    #region props
+    public TopbarLeftParaams _topbarLeftParaams { get; set; } = new();
+    #endregion
+
+    #region lifecycle
+    protected override void OnInitialized()
+    {
+        _navigationManager.LocationChanged += LocationChanged;
+        UpdateParams();
+    }
+    #endregion
+
+    #region opearations
+    private void LocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        UpdateParams();
+    }
+    private void UpdateParams()
+    {
+        var uriSegments = new Uri(_navigationManager.Uri).Segments;
+        var uriSegmentsList = uriSegments.ToList(); 
+        uriSegmentsList = uriSegmentsList.FindAll(x => x != "/");
+        if (uriSegmentsList.Count >= 1)
+        {
+            _topbarLeftParaams.page = uriSegmentsList.FirstOrDefault()?.Replace("/", "");
+        }
+    }
+    #endregion
+}
